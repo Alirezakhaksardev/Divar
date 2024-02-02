@@ -1,9 +1,9 @@
 function App() {
 
   return (
-    <>
-      Hi
-    </>
+    <h1>
+      سلام
+    </h1>
   )
 }
 
