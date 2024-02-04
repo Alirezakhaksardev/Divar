@@ -4,7 +4,7 @@ const paths = [
     'utils',
     'configs',
     'router',
-    'layout',
+    'layouts',
     'pages',
     'assets',
     'styles',

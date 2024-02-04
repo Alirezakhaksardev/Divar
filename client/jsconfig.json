@@ -11,7 +11,7 @@
             // end 
             "configs/*" : ["src/configs/*"],
             "contants/*" : ["src/constants/*"],
-            "layout/*" : ["src/layout/*"],
+            "layouts/*" : ["src/layouts/*"],
             "router/*" : ["src/router/*"],
             "services/*" : ["src/services/*"],
             "utils/*" : ["src/utils/*"],
