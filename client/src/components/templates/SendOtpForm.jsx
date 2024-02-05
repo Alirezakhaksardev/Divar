@@ -1,6 +1,7 @@
 import React from 'react'
 import { sendOtp } from 'services/auth';
 import styles from 'templates/SendOtpForm.module.css'
+import { p2e } from 'utils/replaceNumber';
 
 function SendOtpForm({ mobile, setMobile, setStep }) {
 
@@ -9,7 +10,7 @@ function SendOtpForm({ mobile, setMobile, setStep }) {
 
     if (mobile.length !== 11) return;
 
-    const { response, error } = await sendOtp(mobile)
+    const { response, error } = await sendOtp(p2e(mobile))
 
     if(response) setStep(2)
     if(error) {

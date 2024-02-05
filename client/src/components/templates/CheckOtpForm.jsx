@@ -5,6 +5,7 @@ import { checkOtp } from 'services/auth';
 import { getProfile } from 'services/user';
 import { setCookie } from 'utils/cookie';
 import styles from 'templates/CheckOtpForm.module.css'
+import { p2e } from 'utils/replaceNumber';
 
 function CheckOtpForm({code , setCode , mobile , setStep }) {
 
@@ -16,7 +17,7 @@ function CheckOtpForm({code , setCode , mobile , setStep }) {
     
     if(code.length !== 5) return
 
-    const {response , error} = await checkOtp(mobile , code);
+    const {response , error} = await checkOtp(p2e(mobile) , p2e(code));
 
     if(response) {
       setCookie(response.data)

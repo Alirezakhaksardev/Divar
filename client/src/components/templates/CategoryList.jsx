@@ -29,7 +29,7 @@ function CategoryList() {
                                 <div key={i._id}>
                                     <img src={`${i.icon}.svg`} alt="" />
                                     <h5>{i.name}</h5>
-                                    <button onClick={() => deleteHandler(i._id)} disabled={mutationDel.isLoading}>Delete</button>
+                                    <button onClick={() => deleteHandler(i._id)} disabled={mutationDel.isLoading}>حذف</button>
                                     <p>slug : {i.slug}</p>
                                 </div>
                             ))
