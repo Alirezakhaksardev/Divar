@@ -1,6 +1,6 @@
-import { useQuery } from '@tanstack/react-query'
+import { useQuery, useQueryClient } from '@tanstack/react-query'
 import axios from 'axios';
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import { toast } from 'react-hot-toast';
 import { useNavigate } from 'react-router-dom';
 import { getCategories } from 'services/admin'
@@ -10,7 +10,11 @@ import { getCookie } from 'utils/cookie';
 
 function AddPost() {
 
+    const queryClient = useQueryClient()
+
     const { data, isLoading } = useQuery(["get-categories"], getCategories)
+
+    const [loading, setLoading] = useState(false);
 
     const defualtCategory = data ? data.data[0]._id : '';
 
@@ -20,24 +24,29 @@ function AddPost() {
         content: '',
         category: defualtCategory,
         city: '',
-        amount: null,
+        amount: '',
         images: null
     })
     const navigate = useNavigate();
+    const fileInputRef = useRef(null);
 
     const submitHandler = e => {
         e.preventDefault()
-
+        setLoading(true)
         if (dataForm.category == '') setDataForm({ ...dataForm, category: defualtCategory })
 
         const { title, content, category, city, amount, images } = dataForm
-        if (!title || !content || !category || !city || amount == null || images == null) return toast.error("لطفا اطلاعات معتبر وارد کنید !")
-
+        if (!title || !content || !category || !city || amount == 0 || images == null) {
+            toast.error("لطفا اطلاعات معتبر وارد کنید !");
+            setLoading(false)
+            return
+        }
         // بررسی فرمت فایل
 
-        const allowedFormats = ['image/jpeg', 'image/png', 'image/gif' , 'image/webp'];
+        const allowedFormats = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
         if (!allowedFormats.includes(images.type)) {
             toast.error('لطفاً یک فایل عکس با فرمت مناسب انتخاب کنید.');
+            setLoading(false)
             return;
         }
 
@@ -45,6 +54,7 @@ function AddPost() {
         const maxSizeInBytes = 2 * 1024 * 1024; // 2 مگابایت
         if (images.size > maxSizeInBytes) {
             toast.error('لطفاً یک فایل عکس با حجم کمتر از 2 مگابایت انتخاب کنید.');
+            setLoading(false)
             return;
         }
 
@@ -62,8 +72,25 @@ function AddPost() {
                     "Content-Type": "multipart/form-data",
                     Authorization: `bearer ${accessToken}`
                 }
-            }).then(res => toast.success(res.data.message)).catch(error => console.log(error))
-        }else{
+            }).then(res => {
+                toast.success(res.data.message);
+                setDataForm({
+                    ...dataForm,
+                    title: '',
+                    content: '',
+                    city: '',
+                    amount: '',
+                });
+                queryClient.invalidateQueries("my-post-list");
+                setLoading(false)
+                if (fileInputRef.current) {
+                    fileInputRef.current.value = null;
+                }
+            }).catch(error => {
+                console.log(error)
+                setLoading(false)
+            })
+        } else {
             navigate(0)
         }
 
@@ -82,16 +109,16 @@ function AddPost() {
         <form onSubmit={submitHandler} onChange={changeHandle} className={styles.form}>
             <h3>افزودن آگهی</h3>
             <label htmlFor="title">عنوان</label>
-            <input type="text" name='title' id='title' />
+            <input type="text" name='title' id='title' value={dataForm.title} onChange={changeHandle} />
 
             <label htmlFor="content">توضیحات</label>
-            <textarea name='content' id='content' />
+            <textarea name='content' id='content' value={dataForm.content} onChange={changeHandle} />
 
             <label htmlFor="amount">قیمت</label>
-            <input type="number" name='amount' id='amount' />
+            <input type="number" name='amount' id='amount' value={dataForm.amount} onChange={changeHandle} />
 
             <label htmlFor="city">شهر</label>
-            <input type="text" name='city' id='city' />
+            <input type="text" name='city' id='city' value={dataForm.city} onChange={changeHandle} />
 
             <label htmlFor="category">دسته بندی</label>
             <select name="category" id="category" disabled={isLoading}>
@@ -102,9 +129,9 @@ function AddPost() {
                 }
             </select>
             <label htmlFor="images">عکس</label>
-            <input type="file" name='images' id='images' />
+            <input type="file" name='images' id='images' ref={fileInputRef} />
 
-            <button type='submit'>ثبت آگهی</button>
+            <button type='submit' disabled={loading}>ثبت آگهی</button>
         </form>
     )
 }

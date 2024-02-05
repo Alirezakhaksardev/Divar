@@ -32,8 +32,9 @@
     border-radius: 5px;
     font-size: 0.9rem;
     cursor: pointer;
+    transition: all 0.3s ease-in;
 }
-
-/* .form select option:first-child{
-    color: #cecece;
-} */
+.form button:disabled{
+    opacity: 0.5;
+    cursor: default;
+}

@@ -9,7 +9,7 @@ import { Navigate, Route, Routes, useNavigate } from 'react-router-dom'
 import { getProfile } from 'services/user'
 
 function Router() {
-    const { data, isLoading, error } = useQuery(["profile"], getProfile)
+    const { data, isLoading } = useQuery(["profile"], getProfile)
     if (isLoading) return <Loader />
 
     return (
