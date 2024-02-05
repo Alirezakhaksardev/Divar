@@ -5,7 +5,7 @@ import styles from 'layouts/Footer.module.css'
 function Footer() {
   return (
     <footer className={styles.footer}>
-      <p>ساخته شده با  <spna ><FaHeart className={styles.heart} /></spna> علیرضا خاکسار</p>
+      <p>ساخته شده با  <FaHeart className={styles.heart} /> علیرضا خاکسار</p>
     </footer>
   )
 }
